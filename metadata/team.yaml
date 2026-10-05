@@ -4,16 +4,16 @@
 # - If your team has 4 members: provide all 4 members.
 
 team:
-  team_id: ""
-  name: ""
+  team_id: "61"
+  name: "Soul Reapers"
   repository: "https://github.com/goud76856-design/build-secure"
 
 members:
-  - name: ""
-    email: ""
-  - name: ""
-    email: ""
-  - name: ""
-    email: ""
-  - name: ""
-    email: ""
+  - name: "Lingala Sri Charan Reddy"
+    email: "lingalasricharanreddy@gmail.com"
+  - name: "Konakati Manikesh Reddy"
+    email: "manikeshreddy04@gmail.com"
+  - name: "Gangu Jashwant"
+    email: "jaswanthbtech009@gmail.com"
+  - name: "Badamoni Arya Goud"
+    email: "goud76856@gmail.com"
