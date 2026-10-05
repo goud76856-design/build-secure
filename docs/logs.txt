@@ -483,7 +483,7 @@ Files Modified / Created:
 * docs/APPROACH.md (Modified)
 * docs/logs.txt (Modified)
 
-Actions Taken:
+* Actions Taken:
 * Installed Next.js, Prisma, Tailwind, Zod, and testing libraries
 * Created Prisma schema and seeded database with deterministic accounts and shipments
 * Authored full application code across public, customer, driver, and admin portals
@@ -491,3 +491,36 @@ Actions Taken:
 * Wrote unit and integration test suites (19 tests passing)
 * Built and verified Next.js production build and started server on port 3000
 * Verified API endpoints and authenticated roles via live requests
+
+================================================================================
+[2026-10-05T14:08:45+05:30] Background Tasks Inspection & Lifecycle Management
+================================================================================
+User Prompt (verbatim):
+WHAT ABT THE REMAINING TASKS WHICH ARE RUNNING RIGHT NOW LIKE CURL AND NPM RUN START
+
+Agent Response:
+Here is the status and breakdown of the background tasks:
+
+1. `curl`:
+The background curl task was an automated health check ping from our verification step. It has been terminated and cleared.
+
+2. `npm run start` (Active Server on Port 3000):
+This is the Next.js production web server that powers the live ShipFlow application. It is intentionally kept running so you and evaluators can interact with the app in real time in your web browser at http://localhost:3000.
+- If you want to keep exploring the web UI, leave it running.
+- If you ever want to shut the web server down, let me know and I will terminate it immediately.
+
+Agent Response Summary:
+Inspected running background tasks. Terminated the stale curl health-check process. Clarified that npm run start is the active web server hosting ShipFlow locally at http://localhost:3000, explaining its purpose and offering to terminate it upon participant request.
+
+Commit SHA:
+(Recorded upon git commit)
+
+Files Modified / Created:
+* docs/logs.txt (Modified)
+
+Actions Taken:
+* Listed running background tasks via manage_task
+* Terminated task-409 (hanging curl command)
+* Confirmed task-405 (Next.js server) is healthy and serving port 3000
+* Appended turn entry to docs/logs.txt
+
