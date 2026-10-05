@@ -1,50 +1,47 @@
 # Project Approach & Architecture — Build Secure 24
 
-**Team ID:** 
-**Project Name:** 
-**Team Size:** [2 or 4 Members]
-**Primary Track / Domain:** 
+**Team ID:** 61
+**Project Name:** ShipFlow — Enterprise Shipment Management & Logistics Platform
+**Team Size:** 4 Members (Lingala Sri Charan Reddy, Konakati Manikesh Reddy, Gangu Jashwant, Badamoni Arya Goud)
+**Primary Track / Domain:** Secure Logistics & Full-Stack Cloud Engineering
 
 ---
 
 ## 1. Problem Understanding, Scope & Threat Model
 
 ### 1.1 Problem Statement & Real-World Motivation
-*Describe the specific problem your project solves, why it matters, and the core security challenges involved.*
+Modern supply chain logistics suffer from opaque shipment tracking, unauthorized status manipulation, lack of verified chain-of-custody, and insecure role boundaries between customers, drivers, and dispatchers. **ShipFlow** addresses this by providing a robust, full-stack logistics management platform with strict state machine transitions, server-side role-based access control (RBAC), tamper-evident audit logging, and privacy-safe public tracking.
 
 ### 1.2 Target Users & Personas
-*Identify target user groups, their operational workflows, and their trust levels (e.g. End User, Admin, Auditor).*
+- **Customer:** Submits shipments, tracks real-time progress, views estimated delivery dates, and receives status updates.
+- **Delivery Personnel (Driver):** Executes assigned pickups and deliveries, updates transit milestones with mandatory proof-of-delivery or failure justification.
+- **Administrator / Dispatcher:** Oversees operations, manages fleet and rate cards, assigns shipments, inspects immutable audit logs, and monitors system health.
 
 ### 1.3 Threat Model & Attack Surface
-*Document the threat landscape for this system:*
-- **Critical Assets:** (e.g., user credentials, PII, sensitive business records, session tokens)
-- **Potential Attack Vectors:** (e.g., credential stuffing, injection attacks, privilege escalation, unauthorized API access)
-- **OWASP Top 10 Considerations:** (e.g., broken access control, cryptographic failures, injection prevention)
+- **Critical Assets:** User authentication credentials, recipient & sender PII (phone, address, email), shipment chain-of-custody records, financial rate cards, and audit logs.
+- **Potential Attack Vectors:**
+  - *Privilege Escalation:* Unauthorized users attempting to invoke driver or admin status updates. Mitigated via strict server-side middleware and role checks.
+  - *Insecure Direct Object References (IDOR):* Customers attempting to view or cancel other customers' shipments. Mitigated via database-level ownership filtering.
+  - *Arbitrary State Forgery:* Attackers jumping directly from `CREATED` to `DELIVERED`. Mitigated via an authoritative server-side state transition validator.
+  - *PII Leakage in Public Tracking:* Unauthenticated users viewing full names or exact street addresses via `/track`. Mitigated via privacy-masked public response DTOs.
+  - *Input Tampering & SQLi:* Mitigated using Prisma ORM parameterized queries and strict Zod validation schemas.
 
 ---
 
 ## 2. Technical Architecture & Secure System Design
 
 ### 2.1 High-Level Architecture Overview
-*Describe the multi-tier system structure (Client / API Gateway / Domain Services / Data Persistence).*
+ShipFlow is structured as a modern full-stack web architecture:
+- **Client Tier:** Next.js React 18 App Router with Tailwind CSS, responsive role dashboards, and dynamic Recharts analytics.
+- **API & Domain Tier:** Next.js Server Actions and Route Handlers with session-based HttpOnly authentication, Zod validation, and state machine enforcement.
+- **Persistence Tier:** Prisma ORM backed by SQLite for zero-friction local development and automated testing, with direct portability to PostgreSQL for production deployment.
+- **Security & Audit Subsystem:** Centralized audit logger capturing actor, action, target entity, timestamp, and metadata for all state mutations.
 
-### 2.2 Data Flow & Component Interaction
-*Outline how requests traverse the system from ingress to storage and back, highlighting trust boundaries.*
-
-### 2.3 Technology Stack Rationale
-*Explain the tools selected and why alternatives were rejected:*
-- **Backend / API Framework:** (e.g., FastAPI, Express, Go Gin) — *Why chosen:*
-- **Frontend / Client:** (e.g., React, Next.js, HTML/JS) — *Why chosen:*
-- **Database & Persistence:** (e.g., PostgreSQL, SQLite, Redis) — *Why chosen:*
-- **Authentication & Cryptography:** (e.g., Bcrypt/Argon2, PyJWT) — *Why chosen:*
-
-### 2.4 Defense-in-Depth Security Controls
-*Detail the specific security controls implemented:*
-1. **Authentication & Session Security:** (e.g., salted password hashing, short-lived signed tokens)
-2. **Authorization & Access Control:** (e.g., role-based access control, object-level permission checks)
-3. **Input Validation & Sanitization:** (e.g., strict schema validation, query parameterization to prevent SQLi)
-4. **Rate Limiting & Abuse Prevention:** (e.g., IP/token bucket throttling on public endpoints)
-5. **Secrets & Configuration Hygiene:** (e.g., zero hardcoded credentials, 100% environment variable isolation)
+### 2.2 Technology Stack Rationale
+- **Next.js & TypeScript:** Industry-standard type safety, server-side data isolation, and fast deployment compatibility.
+- **Prisma ORM:** Strong type-safe database queries with zero manual SQL injection vulnerabilities.
+- **Bcrypt & Session Auth:** Time-tested salted password hashing with secure session cookie tokens.
+- **Zod & React Hook Form:** Bulletproof schema validation for multi-step shipment forms.
 
 ---
 
@@ -52,10 +49,11 @@
 
 | Milestone / Phase | Time Window | Key Objectives & Deliverables | Security Verification | Status |
 |---|---|---|---|---|
-| **Phase 1: Foundation & Setup** | 0h – 4h | Contract onboarding, repo setup, baseline data schemas | Secret scan & baseline check | `Planned` |
-| **Phase 2: Core Domain & Auth** | 4h – 12h | Core business logic, secure authentication & authorization | Auth test suite & crypto validation | `Planned` |
-| **Phase 3: Security & Hardening**| 12h – 18h | Input validation, rate limiting, error handling, security middleware | SAST scanning & edge case tests | `Planned` |
-| **Phase 4: Polish & Deployment**| 18h – 24h | UI polish, live cloud deployment, final docs & commit freeze | Live deployment URL check | `Planned` |
+| **Phase 1: Foundation & Setup** | 0h – 3h | Architecture spec, repo configuration, Next.js scaffolding in `src/`, Prisma models | Plan approved & secret scan clean | `In Progress` |
+| **Phase 2: Auth & Core Domain** | 3h – 8h | Multi-role authentication (Customer, Driver, Admin), session guards, RBAC | Auth tests & password hashing verified | `Planned` |
+| **Phase 3: Workflows & Tracking**| 8h – 14h | 5-step shipment creator, state transition engine, driver delivery actions, public `/track` | State machine tests & IDOR protection | `Planned` |
+| **Phase 4: Admin & Dashboards** | 14h – 19h | Operations dashboard, driver assignment, rate cards, audit logs, system health | Admin authorization & CSV sanitize | `Planned` |
+| **Phase 5: Tests & Hardening** | 19h – 24h | Vitest unit/integration tests, Playwright E2E flows, production build, final commit freeze | 100% passing tests & clean build | `Planned` |
 
 ---
 

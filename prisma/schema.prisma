@@ -1,0 +1,198 @@
+// ShipFlow Prisma Schema
+// Database abstraction configured for SQLite locally and ready for PostgreSQL in production
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  passwordHash String
+  role         String   @default("CUSTOMER") // "CUSTOMER", "DRIVER", "ADMIN"
+  avatarUrl    String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  customerProfile  CustomerProfile?
+  driverProfile    DriverProfile?
+  shipments        Shipment[]        @relation("CustomerShipments")
+  assignedDeliveries Shipment[]      @relation("DriverShipments")
+  notifications    Notification[]
+  auditLogs        AuditLog[]
+  timelineEvents   ShipmentEvent[]
+
+  @@index([email])
+  @@index([role])
+}
+
+model CustomerProfile {
+  id                     String  @id @default(cuid())
+  userId                 String  @unique
+  user                   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  defaultAddress         String?
+  companyName            String?
+  preferredContactMethod String? @default("EMAIL")
+}
+
+model DriverProfile {
+  id                 String  @id @default(cuid())
+  userId             String  @unique
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employeeId         String  @unique
+  driverReference    String  @unique
+  vehicleType        String  // "VAN", "BIKE", "TRUCK"
+  vehicleNumber      String
+  availabilityStatus String  @default("AVAILABLE") // "AVAILABLE", "ON_DUTY", "OFF_DUTY"
+  rating             Float   @default(5.0)
+  currentZone        String  @default("NORTH")
+}
+
+model Shipment {
+  id                    String    @id @default(cuid())
+  trackingNumber        String    @unique
+  customerId            String
+  customer              User      @relation("CustomerShipments", fields: [customerId], references: [id])
+  assignedDriverId      String?
+  assignedDriver        User?     @relation("DriverShipments", fields: [assignedDriverId], references: [id])
+  serviceLevelId        String
+  serviceLevel          ServiceLevel @relation(fields: [serviceLevelId], references: [id])
+  status                String    @default("CREATED") // "DRAFT", "CREATED", "CONFIRMED", "PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED", "DELIVERY_FAILED", "CANCELLED", "RETURNED"
+  priority              String    @default("STANDARD") // "LOW", "STANDARD", "HIGH", "URGENT"
+  estimatedDeliveryDate DateTime
+  actualDeliveryDate    DateTime?
+  price                 Float
+  currency              String    @default("USD")
+  packageDescription    String
+  packageType           String    // "BOX", "PALLET", "DOCUMENT", "FRAGILE"
+  weight                Float     // kg
+  length                Float     // cm
+  width                 Float     // cm
+  height                Float     // cm
+  quantity              Int       @default(1)
+  declaredValue         Float     @default(0.0)
+  fragile               Boolean   @default(false)
+  specialInstructions   String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  addresses     ShipmentAddress[]
+  events        ShipmentEvent[]
+  notifications Notification[]
+
+  @@index([trackingNumber])
+  @@index([customerId])
+  @@index([assignedDriverId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ShipmentAddress {
+  id           String   @id @default(cuid())
+  shipmentId   String
+  shipment     Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  type         String   // "SENDER", "RECIPIENT"
+  name         String
+  companyName  String?
+  email        String?
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  postalCode   String
+  country      String
+
+  @@index([shipmentId])
+}
+
+model ShipmentEvent {
+  id                 String   @id @default(cuid())
+  shipmentId         String
+  shipment           Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  previousStatus     String?
+  newStatus          String
+  note               String?
+  failureReason      String?
+  proofOfDeliveryUrl String?
+  signatureUrl       String?
+  latitude           Float?
+  longitude          Float?
+  createdById        String?
+  createdBy          User?    @relation(fields: [createdById], references: [id])
+  createdAt          DateTime @default(now())
+
+  @@index([shipmentId])
+  @@index([createdAt])
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  recipientId String
+  recipient   User      @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  type        String    // "STATUS_CHANGE", "ASSIGNMENT", "SYSTEM_ALERT"
+  title       String
+  message     String
+  shipmentId  String?
+  shipment    Shipment? @relation(fields: [shipmentId], references: [id])
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  @@index([recipientId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id])
+  action     String   // "CREATE_SHIPMENT", "UPDATE_STATUS", "ASSIGN_DRIVER", "SYSTEM_CONFIG"
+  entityType String   // "Shipment", "User", "PricingRule"
+  entityId   String
+  metadata   String?  // JSON string
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  @@index([actorId])
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model ServiceLevel {
+  id                 String        @id @default(cuid())
+  name               String        @unique // "Standard", "Express", "Same-Day"
+  description        String
+  estimatedDays      Int
+  basePrice          Float
+  pricePerWeightUnit Float
+  isActive           Boolean       @default(true)
+  shipments          Shipment[]
+  pricingRules       PricingRule[]
+}
+
+model PricingRule {
+  id              String       @id @default(cuid())
+  serviceLevelId  String
+  serviceLevel    ServiceLevel @relation(fields: [serviceLevelId], references: [id], onDelete: Cascade)
+  originZone      String
+  destinationZone String
+  minimumPrice    Float
+  weightPrice     Float
+  surcharge       Float        @default(0.0)
+  isActive        Boolean      @default(true)
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
