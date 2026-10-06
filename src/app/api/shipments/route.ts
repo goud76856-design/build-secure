@@ -4,7 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { createShipmentSchema } from "@/lib/validators";
 import { generateTrackingNumber } from "@/lib/tracking";
 import { calculateShippingQuote, calculateEstimatedDeliveryDate } from "@/lib/pricing";
-import { logAuditEvent } from "@/lib/audit";
+import { logAuditEvent, extractClientIp } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
@@ -223,8 +223,8 @@ export async function POST(req: NextRequest) {
       action: "CREATE_SHIPMENT",
       entityType: "Shipment",
       entityId: shipment.id,
-      metadata: { trackingNumber, price: calculatedPrice, serviceLevel: serviceLevel.name },
-      ipAddress: req.headers.get("x-forwarded-for") || undefined,
+      metadata: { trackingNumber: shipment.trackingNumber, price: calculatedPrice, serviceLevel: serviceLevel.name },
+      ipAddress: extractClientIp(req),
     });
 
     return NextResponse.json({
