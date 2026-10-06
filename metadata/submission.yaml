@@ -6,6 +6,6 @@ version: "1.0"
 submission:
   team_id: "61"
   repository: "https://github.com/goud76856-design/build-secure"
-  commit_sha: "1daed9f97caf0548d287c7f4a75a46436f65c14a"
-  deployment_url: "http://localhost:3000"
+  commit_sha: "362b071a9134a413d7426a8d6e987c69992f91df"
+  deployment_url: "https://build-secure-zeta.vercel.app"
   submitted_at: "2026-10-06T10:45:00+05:30"
