@@ -247,7 +247,7 @@ export default function CustomerShipmentDetailPage() {
           <div>
             <span className="text-slate-400 block">Total Price</span>
             <span className="font-bold text-base text-slate-900 dark:text-white mt-1 block">
-              ${shipment.price.toFixed(2)} USD
+              ₹{shipment.price.toFixed(2)} INR
             </span>
             <span className="text-[11px] text-emerald-600">Paid & Verified</span>
           </div>

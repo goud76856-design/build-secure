@@ -38,7 +38,7 @@ export async function GET() {
       "Customer Email",
       "Assigned Driver",
       "Service Level",
-      "Price (USD)",
+      "Price (INR)",
       "Package Type",
       "Weight (kg)",
       "Sender City",

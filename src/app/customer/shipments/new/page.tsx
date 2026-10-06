@@ -12,7 +12,6 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
-  DollarSign,
   Calendar,
   AlertCircle,
   Copy,
@@ -256,7 +255,7 @@ export default function NewShipmentPage() {
             <div className="flex justify-between">
               <span>Billed Amount:</span>
               <span className="font-semibold text-slate-900 dark:text-white">
-                ${createdShipment.price.toFixed(2)} USD
+                ₹{createdShipment.price.toFixed(2)} INR
               </span>
             </div>
             <div className="flex justify-between">
@@ -626,7 +625,7 @@ export default function NewShipmentPage() {
                 </div>
 
                 <div>
-                  <label className="font-semibold block mb-1">Declared Value ($)</label>
+                  <label className="font-semibold block mb-1">Declared Value (₹)</label>
                   <input
                     type="number"
                     min="0"
@@ -679,7 +678,7 @@ export default function NewShipmentPage() {
                   className="rounded border-slate-300 text-brand-600 focus:ring-brand-500"
                 />
                 <label htmlFor="fragile" className="font-medium text-slate-700 dark:text-slate-300">
-                  Fragile contents (Requires specialized cushioned courier transport + $5.00)
+                  Fragile contents (Requires specialized cushioned courier transport + ₹5.00)
                 </label>
               </div>
 
@@ -751,8 +750,8 @@ export default function NewShipmentPage() {
                   Guaranteed Rate Estimate
                 </span>
                 <div className="text-2xl font-bold mt-0.5 text-white flex items-baseline gap-1">
-                  <span>${calculateEstimate().toFixed(2)}</span>
-                  <span className="text-xs font-normal text-slate-400">USD (all surcharges incl.)</span>
+                  <span>₹{calculateEstimate().toFixed(2)}</span>
+                  <span className="text-xs font-normal text-slate-400">INR (all surcharges incl.)</span>
                 </div>
               </div>
 
@@ -834,7 +833,7 @@ export default function NewShipmentPage() {
                 </p>
                 <p className="text-slate-500">Est. Delivery: {getEstimatedDate()}</p>
                 <p className="text-base font-bold text-emerald-600 dark:text-emerald-400">
-                  Total Quote: ${calculateEstimate().toFixed(2)} USD
+                  Total Quote: ₹{calculateEstimate().toFixed(2)} INR
                 </p>
               </div>
             </div>

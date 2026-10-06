@@ -13,7 +13,7 @@ import {
   ShieldAlert,
   Bell,
   Settings,
-  DollarSign,
+  IndianRupee,
   MapPin,
   ClipboardList,
 } from "lucide-react";
@@ -45,7 +45,7 @@ export function Sidebar({ role }: SidebarProps) {
     { label: "Shipments & Dispatch", href: "/admin/shipments", icon: Package },
     { label: "Fleet & Drivers", href: "/admin/drivers", icon: Truck },
     { label: "Users & Accounts", href: "/admin/users", icon: Users },
-    { label: "Rates & Surcharges", href: "/admin/rates", icon: DollarSign },
+    { label: "Rates & Surcharges", href: "/admin/rates", icon: IndianRupee },
     { label: "Audit Trails", href: "/admin/audit-logs", icon: ClipboardList },
     { label: "System Health", href: "/admin/system-health", icon: Activity },
   ];

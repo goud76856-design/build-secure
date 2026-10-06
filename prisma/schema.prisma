@@ -70,7 +70,7 @@ model Shipment {
   estimatedDeliveryDate DateTime
   actualDeliveryDate    DateTime?
   price                 Float
-  currency              String    @default("USD")
+  currency              String    @default("INR")
   packageDescription    String
   packageType           String    // "BOX", "PALLET", "DOCUMENT", "FRAGILE"
   weight                Float     // kg

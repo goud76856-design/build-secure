@@ -28,7 +28,7 @@ async function main() {
     data: [
       { key: "COMPANY_NAME", value: "ShipFlow Logistics Inc.", description: "Corporate platform branding" },
       { key: "SUPPORT_EMAIL", value: "support@shipflow.com", description: "Default customer service contact" },
-      { key: "DEFAULT_CURRENCY", value: "USD", description: "Base billing currency" },
+      { key: "DEFAULT_CURRENCY", value: "INR", description: "Base billing currency" },
       { key: "SYSTEM_VERSION", value: "v1.4.0-prod", description: "Current deployed kernel release" },
     ],
   });
@@ -430,7 +430,7 @@ async function main() {
         estimatedDeliveryDate: s.estimatedDeliveryDate,
         actualDeliveryDate: s.actualDeliveryDate,
         price: s.price,
-        currency: "USD",
+        currency: "INR",
         packageDescription: s.packageDescription,
         packageType: s.packageType,
         weight: s.weight,

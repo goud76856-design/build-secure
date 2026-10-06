@@ -196,7 +196,7 @@ export default function CustomerShipmentsPage() {
                         {new Date(s.estimatedDeliveryDate).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">
-                        ${s.price.toFixed(2)}
+                        ₹{s.price.toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-right">
                         <Link

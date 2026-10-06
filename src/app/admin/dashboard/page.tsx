@@ -10,7 +10,7 @@ import {
   Truck,
   CheckCircle2,
   AlertTriangle,
-  DollarSign,
+  IndianRupee,
   Users,
   Download,
   ArrowRight,
@@ -137,9 +137,9 @@ export default function AdminDashboardPage() {
         />
         <MetricCard
           title="Gross Revenue"
-          value={`$${totalRevenue.toFixed(0)}`}
+          value={`₹${totalRevenue.toFixed(0)}`}
           subtitle="Billed freight volume"
-          icon={<DollarSign className="w-5 h-5 text-emerald-600" />}
+          icon={<IndianRupee className="w-5 h-5 text-emerald-600" />}
         />
       </div>
 

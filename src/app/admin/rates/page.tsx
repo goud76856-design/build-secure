@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { DollarSign, Truck, ShieldCheck, Check } from "lucide-react";
+import { IndianRupee, Truck, ShieldCheck, Check } from "lucide-react";
 
 export default function AdminRatesPage() {
   const [serviceLevels, setServiceLevels] = useState<any[]>([]);
@@ -41,11 +41,11 @@ export default function AdminRatesPage() {
             <div className="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2">
               <div className="flex justify-between">
                 <span>Base Departure Rate:</span>
-                <span className="font-bold text-slate-900 dark:text-white">${lvl.basePrice.toFixed(2)} USD</span>
+                <span className="font-bold text-slate-900 dark:text-white">₹{lvl.basePrice.toFixed(2)} INR</span>
               </div>
               <div className="flex justify-between">
                 <span>Weight Surcharge:</span>
-                <span className="font-semibold text-slate-900 dark:text-white">${lvl.pricePerWeightUnit.toFixed(2)} / kg</span>
+                <span className="font-semibold text-slate-900 dark:text-white">₹{lvl.pricePerWeightUnit.toFixed(2)} / kg</span>
               </div>
               <div className="flex justify-between">
                 <span>Target SLA:</span>

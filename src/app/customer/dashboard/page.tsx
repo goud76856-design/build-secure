@@ -14,7 +14,7 @@ import {
   Search,
   ArrowRight,
   ExternalLink,
-  DollarSign,
+  IndianRupee,
   AlertCircle,
 } from "lucide-react";
 
@@ -93,9 +93,9 @@ export default function CustomerDashboard() {
         />
         <MetricCard
           title="Total Shipping Spend"
-          value={`$${totalSpend.toFixed(2)}`}
+          value={`₹${totalSpend.toFixed(2)}`}
           subtitle="Current billed shipments"
-          icon={<DollarSign className="w-5 h-5 text-brand-600" />}
+          icon={<IndianRupee className="w-5 h-5 text-brand-600" />}
         />
       </div>
 
@@ -184,7 +184,7 @@ export default function CustomerDashboard() {
                         {new Date(s.estimatedDeliveryDate).toLocaleDateString()}
                       </td>
                       <td className="py-3 px-4 font-semibold text-slate-900 dark:text-white">
-                        ${s.price.toFixed(2)}
+                        ₹{s.price.toFixed(2)}
                       </td>
                       <td className="py-3 px-4 text-right">
                         <Link

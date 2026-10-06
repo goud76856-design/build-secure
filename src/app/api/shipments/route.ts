@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
             priority: data.priority,
             estimatedDeliveryDate,
             price: calculatedPrice,
-            currency: "USD",
+            currency: "INR",
             packageDescription: data.packageDescription,
             packageType: data.packageType,
             weight: data.weight,
