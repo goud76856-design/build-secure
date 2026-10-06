@@ -23,6 +23,7 @@
 
 # SQLite database
 *.db
+!prisma/dev.db
 *.db-journal
 
 # TypeScript
