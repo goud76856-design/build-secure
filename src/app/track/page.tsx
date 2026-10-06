@@ -88,7 +88,7 @@ function TrackContent() {
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
                 type="text"
-                placeholder="e.g. SF-2026-90412"
+                placeholder="Enter your tracking number..."
                 value={trackingNumber}
                 onChange={(e) => setTrackingNumber(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-navy-900 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
@@ -111,19 +111,6 @@ function TrackContent() {
             <div>
               <p className="font-semibold">Tracking Lookup Failed</p>
               <p className="text-xs mt-0.5">{error}</p>
-              <div className="mt-2 text-xs flex gap-2">
-                <span>Try demo code:</span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTrackingNumber("SF-2026-90412");
-                    fetchTracking("SF-2026-90412");
-                  }}
-                  className="underline font-medium hover:text-rose-900"
-                >
-                  SF-2026-90412
-                </button>
-              </div>
             </div>
           </div>
         )}

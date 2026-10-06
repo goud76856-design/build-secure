@@ -62,7 +62,7 @@ export default function LandingPage() {
                 <Search className="w-5 h-5 text-slate-400 ml-3 mr-2 shrink-0" />
                 <input
                   type="text"
-                  placeholder="Enter tracking code (e.g. SF-2026-90412)..."
+                  placeholder="Enter your tracking number..."
                   value={quickTrackNumber}
                   onChange={(e) => setQuickTrackNumber(e.target.value)}
                   className="w-full bg-transparent text-sm focus:outline-none text-slate-900 dark:text-white placeholder:text-slate-400"
@@ -73,24 +73,6 @@ export default function LandingPage() {
                 >
                   <span>Track</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-              <div className="mt-2.5 flex items-center justify-center gap-3 text-xs text-slate-500">
-                <span>Try demo tracking numbers:</span>
-                <button
-                  type="button"
-                  onClick={() => setQuickTrackNumber("SF-2026-90412")}
-                  className="underline hover:text-brand-600"
-                >
-                  SF-2026-90412
-                </button>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={() => setQuickTrackNumber("SF-2026-88193")}
-                  className="underline hover:text-brand-600"
-                >
-                  SF-2026-88193
                 </button>
               </div>
             </form>
