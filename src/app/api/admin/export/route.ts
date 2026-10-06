@@ -5,8 +5,9 @@ import { getSessionUser } from "@/lib/auth";
 function sanitizeCsvCell(val: any): string {
   if (val === null || val === undefined) return '""';
   let str = String(val).replace(/"/g, '""');
-  // Formula injection defense (prevent excel/calc execution)
-  if (str.startsWith("=") || str.startsWith("+") || str.startsWith("-") || str.startsWith("@")) {
+  // Comprehensive formula injection defense (prevent excel/calc execution including leading spaces, tabs, CR)
+  const trimmed = str.trimStart();
+  if (/^[=\+\-@\t\r\|]/.test(trimmed)) {
     str = `'${str}`;
   }
   return `"${str}"`;

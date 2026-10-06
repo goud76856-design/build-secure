@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -35,6 +35,8 @@ export default function DriverStopExecutionPage() {
   const [deliverModalOpen, setDeliverModalOpen] = useState(false);
   const [deliveryNote, setDeliveryNote] = useState("Delivered to front door / recipient in person.");
   const [signatureName, setSignatureName] = useState("");
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
 
   // Failure Modal State
   const [failModalOpen, setFailModalOpen] = useState(false);
@@ -369,6 +371,69 @@ export default function DriverStopExecutionPage() {
               />
             </div>
             <div>
+              <label className="block font-semibold mb-1">Touch/Mouse Signature Pad *</label>
+              <div className="border border-slate-300 dark:border-slate-700 rounded-lg bg-slate-50 dark:bg-navy-950 p-1 relative">
+                <canvas
+                  ref={canvasRef}
+                  width={380}
+                  height={120}
+                  className="w-full h-28 bg-white dark:bg-navy-900 rounded cursor-crosshair touch-none"
+                  onMouseDown={(e) => {
+                    setIsDrawing(true);
+                    const ctx = canvasRef.current?.getContext("2d");
+                    if (ctx && canvasRef.current) {
+                      const rect = canvasRef.current.getBoundingClientRect();
+                      ctx.beginPath();
+                      ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+                    }
+                  }}
+                  onMouseMove={(e) => {
+                    if (!isDrawing) return;
+                    const ctx = canvasRef.current?.getContext("2d");
+                    if (ctx && canvasRef.current) {
+                      const rect = canvasRef.current.getBoundingClientRect();
+                      ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                      ctx.stroke();
+                    }
+                  }}
+                  onMouseUp={() => setIsDrawing(false)}
+                  onTouchStart={(e) => {
+                    setIsDrawing(true);
+                    const ctx = canvasRef.current?.getContext("2d");
+                    if (ctx && canvasRef.current) {
+                      const rect = canvasRef.current.getBoundingClientRect();
+                      const touch = e.touches[0];
+                      ctx.beginPath();
+                      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                    }
+                  }}
+                  onTouchMove={(e) => {
+                    if (!isDrawing) return;
+                    const ctx = canvasRef.current?.getContext("2d");
+                    if (ctx && canvasRef.current) {
+                      const rect = canvasRef.current.getBoundingClientRect();
+                      const touch = e.touches[0];
+                      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+                      ctx.stroke();
+                    }
+                  }}
+                  onTouchEnd={() => setIsDrawing(false)}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const ctx = canvasRef.current?.getContext("2d");
+                    if (ctx && canvasRef.current) {
+                      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                    }
+                  }}
+                  className="absolute bottom-2 right-2 text-[10px] text-slate-500 hover:text-slate-700 bg-white/80 dark:bg-navy-800 px-2 py-0.5 rounded border border-slate-200"
+                >
+                  Clear Pad
+                </button>
+              </div>
+            </div>
+            <div>
               <label className="block font-semibold mb-1">Handover Delivery Note</label>
               <textarea
                 rows={2}
@@ -388,12 +453,13 @@ export default function DriverStopExecutionPage() {
               <button
                 type="button"
                 disabled={updating || !signatureName.trim()}
-                onClick={() =>
+                onClick={() => {
+                  const sigUrl = canvasRef.current ? canvasRef.current.toDataURL("image/png") : `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><text y='20'>${encodeURIComponent(signatureName)}</text></svg>`;
                   handleStatusTransition("DELIVERED", {
                     note: `${deliveryNote} (Signed: ${signatureName})`,
-                    signatureUrl: `sig_${Date.now()}`,
-                  })
-                }
+                    signatureUrl: sigUrl,
+                  });
+                }}
                 className="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold disabled:opacity-50"
               >
                 {updating ? "Saving..." : "Verify & Mark Delivered"}

@@ -1,6 +1,9 @@
+import crypto from "crypto";
+
 export function generateTrackingNumber(): string {
   const year = new Date().getFullYear();
-  const randomDigits = Math.floor(10000 + Math.random() * 90000);
+  // Cryptographically secure non-predictable PRNG (CSPRNG)
+  const randomDigits = crypto.randomInt(10000, 100000);
   return `SF-${year}-${randomDigits}`;
 }
 

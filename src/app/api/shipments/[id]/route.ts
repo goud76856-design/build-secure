@@ -132,9 +132,24 @@ export async function PATCH(
       updateData.actualDeliveryDate = new Date();
     }
 
-    const updatedShipment = await prisma.shipment.update({
-      where: { id: params.id },
+    // Optimistic concurrency locking to eliminate race conditions (TOCTOU)
+    const updateResult = await prisma.shipment.updateMany({
+      where: { id: params.id, status: shipment.status },
       data: updateData,
+    });
+
+    if (updateResult.count === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: { message: "Concurrent modification conflict: shipment status has changed. Please refresh and try again." },
+        },
+        { status: 409 }
+      );
+    }
+
+    const updatedShipment = await prisma.shipment.findUnique({
+      where: { id: params.id },
     });
 
     // Create timeline event

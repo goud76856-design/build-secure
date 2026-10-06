@@ -138,72 +138,85 @@ export async function POST(req: NextRequest) {
     });
 
     const estimatedDeliveryDate = calculateEstimatedDeliveryDate(serviceLevel.estimatedDays);
-    const trackingNumber = generateTrackingNumber();
 
-    const shipment = await prisma.shipment.create({
-      data: {
-        trackingNumber,
-        customerId: session.id,
-        serviceLevelId: serviceLevel.id,
-        status: "CREATED",
-        priority: data.priority,
-        estimatedDeliveryDate,
-        price: calculatedPrice,
-        currency: "USD",
-        packageDescription: data.packageDescription,
-        packageType: data.packageType,
-        weight: data.weight,
-        length: data.length,
-        width: data.width,
-        height: data.height,
-        quantity: data.quantity,
-        declaredValue: data.declaredValue,
-        fragile: data.fragile,
-        specialInstructions: data.specialInstructions || null,
-        addresses: {
-          create: [
-            {
-              type: "SENDER",
-              name: data.sender.name,
-              companyName: data.sender.companyName || null,
-              email: data.sender.email || null,
-              phone: data.sender.phone,
-              addressLine1: data.sender.addressLine1,
-              addressLine2: data.sender.addressLine2 || null,
-              city: data.sender.city,
-              state: data.sender.state,
-              postalCode: data.sender.postalCode,
-              country: data.sender.country,
+    let shipment: any;
+    let attempts = 0;
+    while (attempts < 5) {
+      try {
+        const trackingNumber = generateTrackingNumber();
+        shipment = await prisma.shipment.create({
+          data: {
+            trackingNumber,
+            customerId: session.id,
+            serviceLevelId: serviceLevel.id,
+            status: "CREATED",
+            priority: data.priority,
+            estimatedDeliveryDate,
+            price: calculatedPrice,
+            currency: "USD",
+            packageDescription: data.packageDescription,
+            packageType: data.packageType,
+            weight: data.weight,
+            length: data.length,
+            width: data.width,
+            height: data.height,
+            quantity: data.quantity,
+            declaredValue: data.declaredValue,
+            fragile: data.fragile,
+            specialInstructions: data.specialInstructions || null,
+            addresses: {
+              create: [
+                {
+                  type: "SENDER",
+                  name: data.sender.name,
+                  companyName: data.sender.companyName || null,
+                  email: data.sender.email || null,
+                  phone: data.sender.phone,
+                  addressLine1: data.sender.addressLine1,
+                  addressLine2: data.sender.addressLine2 || null,
+                  city: data.sender.city,
+                  state: data.sender.state,
+                  postalCode: data.sender.postalCode,
+                  country: data.sender.country,
+                },
+                {
+                  type: "RECIPIENT",
+                  name: data.recipient.name,
+                  companyName: data.recipient.companyName || null,
+                  email: data.recipient.email || null,
+                  phone: data.recipient.phone,
+                  addressLine1: data.recipient.addressLine1,
+                  addressLine2: data.recipient.addressLine2 || null,
+                  city: data.recipient.city,
+                  state: data.recipient.state,
+                  postalCode: data.recipient.postalCode,
+                  country: data.recipient.country,
+                },
+              ],
             },
-            {
-              type: "RECIPIENT",
-              name: data.recipient.name,
-              companyName: data.recipient.companyName || null,
-              email: data.recipient.email || null,
-              phone: data.recipient.phone,
-              addressLine1: data.recipient.addressLine1,
-              addressLine2: data.recipient.addressLine2 || null,
-              city: data.recipient.city,
-              state: data.recipient.state,
-              postalCode: data.recipient.postalCode,
-              country: data.recipient.country,
+            events: {
+              create: {
+                previousStatus: null,
+                newStatus: "CREATED",
+                note: "Shipment manifest created online by customer",
+                createdById: session.id,
+              },
             },
-          ],
-        },
-        events: {
-          create: {
-            previousStatus: null,
-            newStatus: "CREATED",
-            note: "Shipment manifest created online by customer",
-            createdById: session.id,
           },
-        },
-      },
-      include: {
-        addresses: true,
-        serviceLevel: true,
-      },
-    });
+          include: {
+            addresses: true,
+            serviceLevel: true,
+          },
+        });
+        break;
+      } catch (err: any) {
+        if (err.code === "P2002" && attempts < 4) {
+          attempts++;
+          continue;
+        }
+        throw err;
+      }
+    }
 
     await logAuditEvent({
       actorId: session.id,
