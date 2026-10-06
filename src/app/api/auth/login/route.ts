@@ -2,10 +2,20 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { comparePassword, signSessionToken, setSessionCookie } from "@/lib/auth";
 import { loginSchema } from "@/lib/validators";
-import { logAuditEvent } from "@/lib/audit";
+import { logAuditEvent, extractClientIp } from "@/lib/audit";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = extractClientIp(req);
+    const { allowed } = checkRateLimit(`login:${ip}`, 15, 60000);
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: { message: "Too many login attempts. Please wait a minute before trying again." } },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
+
     const body = await req.json();
     const result = loginSchema.safeParse(body);
 

@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { maskName, maskAddress } from "@/lib/tracking";
+import { checkRateLimit } from "@/lib/rateLimit";
+import { extractClientIp } from "@/lib/audit";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {
+    const ip = extractClientIp(req);
+    const { allowed, remaining } = checkRateLimit(`track:${ip}`, 30, 60000);
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: { message: "Too many requests. Please slow down." } },
+        { status: 429, headers: { "Retry-After": "60" } }
+      );
+    }
+
     const { searchParams } = new URL(req.url);
     const trackingNumber = searchParams.get("number")?.trim();
 
