@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
-import { Truck, Lock, Mail, ArrowRight, AlertCircle, ShieldCheck, Sparkles } from "lucide-react";
+import { Truck, Lock, Mail, ArrowRight, AlertCircle, ShieldCheck } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -36,12 +36,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemo = (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword("ShipFlow2026!");
-    setError(null);
   };
 
   return (
@@ -119,40 +113,6 @@ export default function LoginPage() {
               <Link href="/auth/register" className="font-semibold text-brand-600 hover:underline">
                 Create an account
               </Link>
-            </div>
-          </div>
-
-          {/* Quick Demo Credentials Assistant */}
-          <div className="bg-slate-100 dark:bg-navy-900/60 rounded-xl border border-slate-200 dark:border-slate-800 p-4 space-y-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-300">
-              <Sparkles className="w-3.5 h-3.5 text-brand-500" />
-              <span>Instant Evaluator Demo Quick-Fill</span>
-            </div>
-            <p className="text-[11px] text-slate-500">
-              Click any role below to pre-populate verified seeded test credentials:
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemo("admin@shipflow.com")}
-                className="p-2 rounded-lg bg-white dark:bg-navy-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-brand-600 hover:border-brand-500 transition-colors text-center"
-              >
-                👑 Admin
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemo("driver.john@shipflow.com")}
-                className="p-2 rounded-lg bg-white dark:bg-navy-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-amber-600 hover:border-amber-500 transition-colors text-center"
-              >
-                🚚 Driver
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemo("customer.alice@gmail.com")}
-                className="p-2 rounded-lg bg-white dark:bg-navy-800 border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-sky-600 hover:border-sky-500 transition-colors text-center"
-              >
-                📦 Customer
-              </button>
             </div>
           </div>
         </div>
